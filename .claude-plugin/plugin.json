@@ -1,0 +1,13 @@
+{
+  "name": "deadweight",
+  "version": "0.1.0",
+  "description": "Audit what your Claude Code setup costs on every request and remove what you never use.",
+  "author": {
+    "name": "Murat Sert",
+    "url": "https://github.com/msertdev"
+  },
+  "homepage": "https://github.com/msertdev/deadweight",
+  "repository": "https://github.com/msertdev/deadweight",
+  "license": "MIT",
+  "keywords": ["tokens", "context", "audit", "skills", "mcp"]
+}

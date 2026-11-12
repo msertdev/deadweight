@@ -1,0 +1,28 @@
+[package]
+name = "deadweight"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+authors = ["Murat Sert <252145209+msertdev@users.noreply.github.com>"]
+description = "Find the dead weight in your Claude Code setup: what every request carries before you type, and what you never use."
+license = "MIT"
+repository = "https://github.com/msertdev/deadweight"
+homepage = "https://github.com/msertdev/deadweight"
+readme = "README.md"
+keywords = ["claude-code", "llm", "tokens", "context", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+exclude = [".github/", "assets/"]
+
+[dependencies]
+anstream = "0.6"
+anstyle = "1"
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+rayon = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
