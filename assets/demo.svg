@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="766" height="736" viewBox="0 0 766 736" role="img" aria-label="deadweight terminal output">
+<title>deadweight terminal output</title>
+<rect x="0.5" y="0.5" width="765" height="735" rx="10" fill="#0d1117" stroke="#30363d"/>
+<path d="M0.5 36 V10.5 A10 10 0 0 1 10.5 0.5 H755.5 A10 10 0 0 1 765.5 10.5 V36 Z" fill="#161b22"/>
+<line x1="0.5" y1="36" x2="765.5" y2="36" stroke="#30363d"/>
+<circle cx="20" cy="18" r="6" fill="#ff5f57"/><circle cx="40" cy="18" r="6" fill="#febc2e"/><circle cx="60" cy="18" r="6" fill="#28c840"/>
+<text x="383.0" y="22" fill="#8b949e" font-family="ui-sans-serif, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" text-anchor="middle">deadweight</text>
+<g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="13" xml:space="preserve">
+<text x="22" y="58"><tspan fill="#3fb950" font-weight="bold">$ </tspan><tspan fill="#f0f6fc" font-weight="bold">deadweight</tspan></text>
+<text x="22" y="98"><tspan fill="#c9d1d9">  </tspan><tspan fill="#f0f6fc" font-weight="bold">deadweight</tspan><tspan fill="#8b949e">  what your Claude Code setup costs on every request</tspan></text>
+<text x="22" y="118"><tspan fill="#8b949e">  latest session 2026-11-12 09:41 · 38 sessions in the last 30 days</tspan></text>
+<text x="22" y="158"><tspan fill="#c9d1d9">  Before you type a word, every request carries </tspan><tspan fill="#ff7b72" font-weight="bold">61.2k tokens</tspan></text>
+<text x="22" y="178"><tspan fill="#8b949e">  measured from your latest session; median of recent sessions 63.8k</tspan></text>
+<text x="22" y="198"><tspan fill="#c9d1d9">  </tspan><tspan fill="#f0f6fc" font-weight="bold">~19.4k</tspan><tspan fill="#c9d1d9"> from your setup · ~41.8k from Claude Code itself (system prompt + 18 tools)</tspan></text>
+<text x="22" y="238"><tspan fill="#f0f6fc" font-weight="bold">  WHAT YOUR SETUP ADDS</tspan></text>
+<text x="22" y="258"><tspan fill="#c9d1d9">  Deferred tool names (412)            ~7.1k  </tspan><tspan fill="#39c5cf">████████████████████████</tspan></text>
+<text x="22" y="278"><tspan fill="#c9d1d9">  Skill listings (214)                 ~6.2k  </tspan><tspan fill="#39c5cf">█████████████████████</tspan></text>
+<text x="22" y="298"><tspan fill="#c9d1d9">  Hook injections (3)                  ~3.4k  </tspan><tspan fill="#39c5cf">███████████▌</tspan></text>
+<text x="22" y="318"><tspan fill="#c9d1d9">  MCP server instructions (4)          ~2.1k  </tspan><tspan fill="#39c5cf">███████▏</tspan></text>
+<text x="22" y="338"><tspan fill="#c9d1d9">  Agent listings (12)                   ~600  </tspan><tspan fill="#39c5cf">██</tspan></text>
+<text x="22" y="378"><tspan fill="#f0f6fc" font-weight="bold">  BIGGEST SOURCES</tspan></text>
+<text x="22" y="398"><tspan fill="#8b949e">  name                           type           tokens    used  contents</tspan></text>
+<text x="22" y="418"><tspan fill="#c9d1d9">  github                         mcp server      ~3.9k  </tspan><tspan fill="#3fb950">  212×</tspan><tspan fill="#8b949e">  91 tools</tspan></text>
+<text x="22" y="438"><tspan fill="#c9d1d9">  kitchen-sink                   plugin          ~3.6k  </tspan><tspan fill="#ff7b72"> never</tspan><tspan fill="#8b949e">  64 tools · 22 skills</tspan></text>
+<text x="22" y="458"><tspan fill="#c9d1d9">  workflow-kit                   plugin          ~2.6k  </tspan><tspan fill="#3fb950">   14×</tspan><tspan fill="#8b949e">  hooks 2.2k · 11 skills</tspan></text>
+<text x="22" y="478"><tspan fill="#c9d1d9">  playwright                     mcp server      ~1.4k  </tspan><tspan fill="#ff7b72"> never</tspan><tspan fill="#8b949e">  33 tools</tspan></text>
+<text x="22" y="498"><tspan fill="#c9d1d9">  marketing-suite                plugin          ~1.1k  </tspan><tspan fill="#ff7b72"> never</tspan><tspan fill="#8b949e">  18 tools · 14 skills</tspan></text>
+<text x="22" y="538"><tspan fill="#f0f6fc" font-weight="bold">  PROBLEMS</tspan></text>
+<text x="22" y="558"><tspan fill="#c9d1d9">  </tspan><tspan fill="#ff7b72" font-weight="bold">✗</tspan><tspan fill="#c9d1d9"> 151 of 214 skills are listed </tspan><tspan fill="#f0f6fc" font-weight="bold">without a description</tspan><tspan fill="#c9d1d9">: the skill listing is full</tspan></text>
+<text x="22" y="578"><tspan fill="#8b949e">      (~30.0k characters). Claude sees only their names, so it can't tell when to use them.</tspan></text>
+<text x="22" y="598"><tspan fill="#c9d1d9">  </tspan><tspan fill="#ff7b72" font-weight="bold">✗</tspan><tspan fill="#c9d1d9"> 2 MCP servers failed to connect at startup</tspan></text>
+<text x="22" y="618"><tspan fill="#c9d1d9">  </tspan><tspan fill="#e3b341" font-weight="bold">!</tspan><tspan fill="#c9d1d9"> 9 MCP servers never signed in, still listing 18 auth-only tools</tspan></text>
+<text x="22" y="638"><tspan fill="#c9d1d9">  </tspan><tspan fill="#e3b341" font-weight="bold">!</tspan><tspan fill="#c9d1d9"> 198 of 214 listed skills were not used in 30 days (~5.1k per request)</tspan></text>
+<text x="22" y="678"><tspan fill="#c9d1d9">  Run </tspan><tspan fill="#f0f6fc" font-weight="bold">deadweight fix</tspan><tspan fill="#c9d1d9"> to disable 6 unused plugins and park 11 unused skills</tspan></text>
+<text x="22" y="698"><tspan fill="#c9d1d9">  and save </tspan><tspan fill="#3fb950" font-weight="bold">~6.8k tokens</tspan><tspan fill="#c9d1d9"> per request.</tspan></text>
+</g></svg>

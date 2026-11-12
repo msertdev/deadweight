@@ -9,6 +9,15 @@ Every plugin, skill, MCP server and hook you install adds text to *every single 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
 
+<p align="center">
+  <img src="assets/demo.svg" alt="deadweight output: every request carries 61.2k tokens before you type; 151 of 214 skills listed without a description" width="760">
+</p>
+
+An example run. Yours will look different, and that's the point.
+
+<details>
+<summary>Same output as text</summary>
+
 ```text
 $ deadweight
 
@@ -48,7 +57,7 @@ $ deadweight
   mcp server playwright              ~1.4k   claude mcp remove "playwright"
 ```
 
-An example run. Yours will look different, and that's the point.
+</details>
 
 ## Why this matters
 
