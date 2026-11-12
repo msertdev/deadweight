@@ -5,6 +5,7 @@
 Every plugin, skill, MCP server and hook you install adds text to *every single request* Claude Code sends, before you type a word. `deadweight` measures that overhead from your own session history, tells you exactly where it comes from, shows what you never actually use, and removes it with one undoable command.
 
 [![CI](https://github.com/msertdev/deadweight/actions/workflows/ci.yml/badge.svg)](https://github.com/msertdev/deadweight/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/deadweight.svg)](https://crates.io/crates/deadweight)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey)
 
@@ -60,10 +61,10 @@ None of this shows up anywhere in the UI. Plugins get installed one at a time an
 ## Install
 
 ```sh
-cargo install --git https://github.com/msertdev/deadweight
+cargo install deadweight
 ```
 
-Or grab a prebuilt binary for macOS, Linux or Windows from [Releases](https://github.com/msertdev/deadweight/releases). It's a single static binary with no runtime dependencies.
+Or grab a prebuilt binary for macOS, Linux or Windows from [Releases](https://github.com/msertdev/deadweight/releases). It's a single binary with no runtime dependencies.
 
 ## Usage
 

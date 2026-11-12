@@ -4,7 +4,7 @@ allowed-tools: Bash(deadweight:*)
 argument-hint: "[fix|undo]"
 ---
 
-Run `deadweight --json` with the Bash tool. If the command is missing, tell the user to install it with `cargo install --git https://github.com/msertdev/deadweight` and stop.
+Run `deadweight --json` with the Bash tool. If the command is missing, tell the user to install it with `cargo install deadweight` and stop.
 
 From the JSON, report briefly:
 
