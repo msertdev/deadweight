@@ -32,6 +32,9 @@ pub struct Inventory {
     pub user_agents: BTreeSet<String>,
     /// MCP servers configured in `.claude.json` (user and current project).
     pub user_mcp: BTreeSet<String>,
+    /// Of those, the ones in the top-level `mcpServers` (user scope), which
+    /// load in every project.
+    pub user_scope_mcp: BTreeSet<String>,
     pub settings_hook_commands: Vec<String>,
     /// `(path, characters)` of CLAUDE.md files loaded for the current directory.
     pub memory_files: Vec<(PathBuf, usize)>,
@@ -95,6 +98,7 @@ impl Inventory {
         if let Some(cfg) = read_json(&paths.global_config) {
             if let Some(m) = cfg.get("mcpServers").and_then(Value::as_object) {
                 inv.user_mcp.extend(m.keys().cloned());
+                inv.user_scope_mcp.extend(m.keys().cloned());
             }
             let project_key = paths.cwd.to_string_lossy().replace('\\', "/");
             if let Some(m) = cfg

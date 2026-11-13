@@ -7,7 +7,7 @@
 //! * [`Usage`]: which skills, MCP tools, agents and slash commands were really
 //!   used across all sessions inside the time window.
 
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
@@ -74,6 +74,10 @@ pub struct Usage {
     pub mcp_tools: HashMap<String, u32>,
     pub agents: HashMap<String, u32>,
     pub commands: HashMap<String, u32>,
+    /// Directories top-level sessions were started in.
+    pub projects: BTreeSet<String>,
+    /// MCP server id (as in `mcp__<id>__tool`) -> project directory -> calls.
+    pub mcp_by_project: HashMap<String, BTreeMap<String, u32>>,
 }
 
 impl Usage {
@@ -88,6 +92,13 @@ impl Usage {
         ] {
             for (k, v) in src {
                 *dst.entry(k).or_default() += v;
+            }
+        }
+        self.projects.extend(other.projects);
+        for (server, projects) in other.mcp_by_project {
+            let dst = self.mcp_by_project.entry(server).or_default();
+            for (p, n) in projects {
+                *dst.entry(p).or_default() += n;
             }
         }
         self
@@ -177,9 +188,10 @@ pub fn load(projects: &Path, days: u64) -> History {
         .par_iter()
         .filter(|f| f.modified >= cutoff)
         .map(|f| {
-            let mut u = scan_usage(&f.path).unwrap_or_default();
+            let (mut u, cwd) = scan_usage(&f.path).unwrap_or_default();
             if f.top_level {
                 u.sessions = 1;
+                u.projects.extend(cwd);
                 u.history_days = now
                     .duration_since(f.modified)
                     .map(|d| d.as_secs() / 86_400)
@@ -433,12 +445,26 @@ fn text_len(v: &Value) -> usize {
     }
 }
 
-/// Count every skill, MCP tool, agent and slash command used in one transcript.
-fn scan_usage(path: &Path) -> std::io::Result<Usage> {
+/// Project key for a working directory, spelled the way `.claude.json` keys
+/// its `projects` (forward slashes, also on Windows).
+pub fn project_key(cwd: &str) -> String {
+    cwd.replace('\\', "/")
+}
+
+/// Count every skill, MCP tool, agent and slash command used in one
+/// transcript, and return the directory the session ran in.
+fn scan_usage(path: &Path) -> std::io::Result<(Usage, Option<String>)> {
     let reader = BufReader::with_capacity(256 * 1024, File::open(path)?);
     let mut u = Usage::default();
+    let mut cwd: Option<String> = None;
+    let mut mcp_calls: HashMap<String, u32> = HashMap::new();
     for line in reader.lines() {
         let Ok(line) = line else { break };
+        if cwd.is_none() && line.contains("\"cwd\"") {
+            cwd = serde_json::from_str::<Value>(&line)
+                .ok()
+                .and_then(|v| v.get("cwd").and_then(Value::as_str).map(project_key));
+        }
         let tool_use = line.contains("\"tool_use\"");
         let command = line.contains("<command-name>");
         if !tool_use && !command {
@@ -479,6 +505,9 @@ fn scan_usage(path: &Path) -> std::io::Result<Usage> {
                     }
                     n if n.starts_with("mcp__") => {
                         *u.mcp_tools.entry(n.to_owned()).or_default() += 1;
+                        if let Some((server, _)) = n[5..].split_once("__") {
+                            *mcp_calls.entry(server.to_owned()).or_default() += 1;
+                        }
                     }
                     _ => {}
                 }
@@ -494,7 +523,15 @@ fn scan_usage(path: &Path) -> std::io::Result<Usage> {
             }
         }
     }
-    Ok(u)
+    if let Some(dir) = &cwd {
+        for (server, n) in mcp_calls {
+            u.mcp_by_project
+                .entry(server)
+                .or_default()
+                .insert(dir.clone(), n);
+        }
+    }
+    Ok((u, cwd))
 }
 
 fn extract_commands(text: &str) -> Vec<String> {

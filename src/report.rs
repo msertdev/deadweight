@@ -333,6 +333,7 @@ fn footer(a: &Analysis, plan: &Plan) {
             );
         }
     }
+    scope_hints(a);
     println!();
     let basis = if a.measured_tokens.is_some() {
         "The total is measured; the breakdown is estimated from text size."
@@ -341,6 +342,47 @@ fn footer(a: &Analysis, plan: &Plan) {
     };
     println!("  {}", paint(DIM, basis));
     println!();
+}
+
+fn scope_hints(a: &Analysis) {
+    if a.scope_hints.is_empty() {
+        return;
+    }
+    println!();
+    println!(
+        "  {}",
+        paint(BOLD, "LOADED IN EVERY PROJECT, USED IN ONE OR TWO")
+    );
+    for h in a.scope_hints.iter().take(6) {
+        let used: Vec<String> = h
+            .used_in
+            .iter()
+            .map(|(p, n)| format!("{n}× in {p}"))
+            .collect();
+        println!(
+            "  {:<34} ~{:<6} {}",
+            truncate(&format!("mcp server {}", h.server), 34),
+            fmt_tokens(h.tokens),
+            paint(
+                DIM,
+                format!("{} (of {} projects)", used.join(", "), h.projects_total)
+            )
+        );
+        let target = match h.used_in.as_slice() {
+            [(p, _)] => format!("projects > \"{p}\" > mcpServers"),
+            _ => "each of those projects' mcpServers".to_owned(),
+        };
+        println!(
+            "    {}",
+            paint(
+                CYAN,
+                format!(
+                    "in .claude.json, move \"{}\" from the top-level mcpServers into {target}",
+                    h.server
+                )
+            )
+        );
+    }
 }
 
 pub fn print_plan(plan: &Plan) {

@@ -55,6 +55,10 @@ $ deadweight
 
   UNUSED, BUT YOURS TO REMOVE
   mcp server playwright              ~1.4k   claude mcp remove "playwright"
+
+  LOADED IN EVERY PROJECT, USED IN ONE OR TWO
+  mcp server linear                  ~810    37× in /home/you/code/app (of 9 projects)
+    in .claude.json, move "linear" from the top-level mcpServers into projects > "/home/you/code/app" > mcpServers
 ```
 
 </details>
@@ -121,6 +125,7 @@ deadweight reads those records:
 2. **Attribute.** Each skill line, tool name, instruction block, agent and hook injection is traced to the plugin, skill, MCP server or connector that added it. Hook commands are matched against each plugin's `hooks.json`. Sizes are converted to tokens from text length; whatever your setup doesn't explain is Claude Code's own system prompt and tools.
 3. **Check usage.** Every transcript from the last 30 days (including subagents) is scanned for `Skill` calls, MCP tool calls, agent launches and slash commands.
 4. **Diagnose.** Failed and never-authenticated MCP servers, duplicate skill names, skills that lost their description, and single skills with very large descriptions.
+5. **Scope.** A user-scope MCP server loads in every project. If its tools were only ever called from one or two projects, deadweight says which ones, so you can move it to those projects and stop paying for it everywhere else. (A project's `.mcp.json` works too, if the team should share it.)
 
 On the author's machine, 1.4 GB of transcripts (41 sessions, 400+ subagent runs) are scanned in about a second, in parallel.
 
@@ -133,7 +138,7 @@ On the author's machine, 1.4 GB of transcripts (41 sessions, 400+ subagent runs)
 - **Conservative.** Plugins that run hooks may be doing useful work deadweight can't see (memory, safety checks), so they are skipped unless you pass `--include-hooked`. `fix` refuses to run with fewer than 5 sessions of history.
 - **No network.** deadweight never makes a network request.
 
-MCP servers in `.claude.json` and claude.ai connectors are never edited; deadweight prints the command that removes them instead.
+MCP servers in `.claude.json` and claude.ai connectors are never edited; deadweight prints the command that removes them, or where to move them, instead.
 
 ## FAQ
 

@@ -259,3 +259,50 @@ fn missing_config_dir_is_a_clear_error() {
     assert!(!out.status.success());
     assert!(String::from_utf8_lossy(&out.stderr).contains("no Claude Code config found"));
 }
+
+/// A session started in `cwd` that makes `calls` calls to the idle-srv MCP server.
+fn project_session(f: &Fixture, dir: &str, cwd: &str, calls: usize) {
+    let mut lines =
+        vec![json!({ "type": "user", "cwd": cwd, "message": { "role": "user", "content": "hi" } })];
+    for _ in 0..calls {
+        let mut t = tool_use("mcp__idle-srv__query", json!({}));
+        t["cwd"] = json!(cwd);
+        lines.push(t);
+    }
+    let text: Vec<String> = lines.iter().map(Value::to_string).collect();
+    let project = f.claude().join("projects").join(dir);
+    fs::create_dir_all(&project).unwrap();
+    fs::write(project.join("s.jsonl"), text.join("\n") + "\n").unwrap();
+}
+
+#[test]
+fn user_mcp_used_in_one_project_gets_a_scope_hint() {
+    let f = Fixture::new(6);
+    project_session(&f, "api", r"C:\code\api", 3);
+    project_session(&f, "web", "/home/u/web", 0);
+
+    let v = f.json(&[]);
+    let hints = &v["analysis"]["scope_hints"];
+    assert_eq!(hints.as_array().unwrap().len(), 1, "{hints}");
+    assert_eq!(hints[0]["server"], "idle-srv");
+    assert_eq!(hints[0]["used_in"], json!([["C:/code/api", 3]]));
+    assert_eq!(hints[0]["projects_total"], 2);
+
+    let (ok, text) = f.run(&[]);
+    assert!(ok, "{text}");
+    assert!(text.contains("USED IN ONE OR TWO"), "{text}");
+    assert!(
+        text.contains(r#"projects > "C:/code/api" > mcpServers"#),
+        "{text}"
+    );
+    assert!(!text.contains("s3cr3t-value"));
+}
+
+#[test]
+fn user_mcp_used_everywhere_gets_no_scope_hint() {
+    let f = Fixture::new(6);
+    project_session(&f, "api", "/home/u/api", 2);
+    project_session(&f, "web", "/home/u/web", 1);
+    let v = f.json(&[]);
+    assert_eq!(v["analysis"]["scope_hints"], json!([]));
+}

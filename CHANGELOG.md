@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New: user-scope MCP servers that are only used in one or two projects are listed with those projects, so you can move them out of the global config. Usage is counted per project from the session transcripts. Suggested by a reader on dev.to.
+
 ## 0.1.0
 
 First release.

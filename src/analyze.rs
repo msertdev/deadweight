@@ -16,6 +16,8 @@ const IDENT_CHARS_PER_TOKEN: f64 = 2.8;
 const SCHEMA_CHARS_PER_TOKEN: f64 = 3.0;
 /// A single skill description above this many tokens is worth pointing out.
 const HEAVY_SKILL_TOKENS: f64 = 400.0;
+/// A user-scope MCP server used in at most this many projects is worth scoping.
+const MAX_SCOPED_PROJECTS: usize = 2;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -175,6 +177,17 @@ pub struct ManualStep {
     pub tokens: f64,
 }
 
+/// A user-scope MCP server that loads in every project but is only used in a few.
+#[derive(Debug, Clone, Serialize)]
+pub struct ScopeHint {
+    pub server: String,
+    /// `(project directory, tool calls)`, most used first.
+    pub used_in: Vec<(String, u32)>,
+    /// Projects with sessions in the window.
+    pub projects_total: usize,
+    pub tokens: f64,
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct Analysis {
     pub session_file: String,
@@ -201,6 +214,7 @@ pub struct Analysis {
     pub skill_listing_chars: usize,
     pub heavy_skills: Vec<HeavySkill>,
     pub manual: Vec<ManualStep>,
+    pub scope_hints: Vec<ScopeHint>,
     pub skills_listed: usize,
     pub skills_unused: usize,
     pub window_days: u64,
@@ -606,6 +620,38 @@ pub fn analyze(inv: &Inventory, hist: &History, window_days: u64) -> Option<Anal
         })
         .collect();
 
+    // User-scope servers that only ever get used in one or two projects.
+    let mut scope_hints: Vec<ScopeHint> = sources
+        .iter()
+        .filter_map(|s| {
+            let Source::UserMcp(name) = &s.source else {
+                return None;
+            };
+            if s.uses == 0 || !inv.user_scope_mcp.contains(name) {
+                return None;
+            }
+            let projects = usage.mcp_by_project.get(&normalize_server(name))?;
+            let other_projects = usage
+                .projects
+                .iter()
+                .filter(|p| !projects.contains_key(*p))
+                .count();
+            if projects.len() > MAX_SCOPED_PROJECTS || other_projects == 0 {
+                return None;
+            }
+            let mut used_in: Vec<(String, u32)> =
+                projects.iter().map(|(p, n)| (p.clone(), *n)).collect();
+            used_in.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+            Some(ScopeHint {
+                server: name.clone(),
+                used_in,
+                projects_total: usage.projects.len(),
+                tokens: s.tokens,
+            })
+        })
+        .collect();
+    scope_hints.sort_by(|a, b| b.tokens.total_cmp(&a.tokens));
+
     let mut recent = hist.recent_first_requests.clone();
     recent.sort_unstable();
     let median_tokens = (recent.len() >= 3).then(|| recent[recent.len() / 2]);
@@ -631,6 +677,7 @@ pub fn analyze(inv: &Inventory, hist: &History, window_days: u64) -> Option<Anal
         skill_listing_chars: snap.skill_listing_chars,
         heavy_skills,
         manual,
+        scope_hints,
         window_days,
         sessions: usage.sessions,
         history_days: usage.history_days,
