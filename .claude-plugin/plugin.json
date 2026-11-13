@@ -1,6 +1,6 @@
 {
   "name": "deadweight",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Audit what your Claude Code setup costs on every request and remove what you never use.",
   "author": {
     "name": "Murat Sert",
